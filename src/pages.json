@@ -1,0 +1,152 @@
+{
+	// 组件自动导入
+	"easycom": {
+		"autoscan": true,
+		"custom": {
+			// uni-ui 规则如下配置  // [!code ++]
+			"^uni-(.*)": "@dcloudio/uni-ui/lib/uni-$1/uni-$1.vue", // [!code ++]
+			// 以 Xtx 开头的组件，在 components 文件夹中查找引入（需要重启服务器）
+			"^Xtx(.*)": "@/components/Xtx$1.vue"
+		}
+	},
+	"pages": [
+		//pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "首页"
+			}
+		},
+		{
+			"path": "pages/my/my",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "我的"
+			}
+		},
+		{
+			"path": "pages/login/login",
+			"style": {
+				"navigationBarTitleText": "登录"
+			}
+		},
+		{
+			"path": "pages/vehicle/vehicle",
+			"style": {
+				"navigationBarTitleText": "车辆详情"
+			}
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8"
+	},
+	// 设置 TabBar
+	"tabBar": {
+		"color": "#333",
+		"selectedColor": "#27ba9b",
+		"backgroundColor": "#fff",
+		"borderStyle": "white",
+		"list": [
+			{
+				"text": "首页",
+				"pagePath": "pages/index/index",
+				"iconPath": "static/tabs/home_default.png",
+				"selectedIconPath": "static/tabs/home_selected.png"
+			},
+			{
+				"text": "我的",
+				"pagePath": "pages/my/my",
+				"iconPath": "static/tabs/user_default.png",
+				"selectedIconPath": "static/tabs/user_selected.png"
+			}
+		]
+	},
+	"subPackages": [
+		{
+			"root": "pagesMember",
+			"pages": [
+				{
+					"path": "settings",
+					"style": {
+						"navigationBarTitleText": "设置"
+					}
+				},
+				{
+					"path": "personInfo",
+					"style": {
+						"navigationStyle": "custom",
+						"navigationBarTitleText": "个人信息"
+					}
+				}
+			]
+		},
+		{
+			"root": "pagesAppointment",
+			"pages": [
+				{
+					"path": "list",
+					"style": {
+						"navigationBarTitleText": "预约列表"
+					}
+				}
+			]
+		},
+		{
+			"root": "pagesOrder/list",
+			"pages": [
+				{
+					"path": "list",
+					"style": {
+						"navigationBarTitleText": "订单列表"
+					}
+				}
+			]
+		},
+		{
+			"root": "pagesOrder/detail",
+			"pages": [
+				{
+					"path": "detail",
+					"style": {
+						"navigationStyle": "custom",
+						"navigationBarTitleText": "订单详情"
+					}
+				}
+			]
+		},
+		{
+			"root": "pagesOrder/payment",
+			"pages": [
+				{
+					"path": "payment",
+					"style": {
+						"navigationBarTitleText": "订单支付"
+					}
+				}
+			]
+		},
+		{
+			"root": "pagesRelet",
+			"pages": [
+				{
+					"path": "list",
+					"style": {
+						"navigationBarTitleText": "续租列表"
+					}
+				}
+			]
+		}
+	],
+	// 分包预下载规则
+	"preloadRule": {
+		"pages/my/my": {
+			"network": "all", // [!code ++]
+			"packages": [
+				"pagesMember"
+			] // [!code ++]
+		}
+	}
+}
