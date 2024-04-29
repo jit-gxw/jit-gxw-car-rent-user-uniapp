@@ -32,4 +32,12 @@ export const PaymentOrderService = (data) => {
         data,
     })
 }
+//故障报修
+export const SubmitFaultService = (data) => {
+    return http({
+        method: 'post',
+        url: `/user/fault/submit`,
+        data,
+    })
+}
 

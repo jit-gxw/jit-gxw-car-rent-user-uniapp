@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import type { OrderPageType, OrderType } from '@/types/order'
 import type { ReletSubmitType } from '@/types/relet.d'
-import { CancelOrderService, DetailOrderService, PaymentOrderService } from '@/services/order'
+import { CancelOrderService, DetailOrderService, PaymentOrderService,SubmitFaultService } from '@/services/order'
 import { SubmitReletService } from '@/services/relet'
 import { onLoad } from '@dcloudio/uni-app'
 import { formatDate } from '@/utils/index'
@@ -23,10 +23,20 @@ const getDetailData = async () => {
 //续租提交数据模型
 const returnTime = ref()
 const reletSubmitData = ref<ReletSubmitType>({} as ReletSubmitType)
+//故障报修数据模型
+const repairDetail=ref()
+const faultSubmit=ref({
+  vehicleId:"",
+  information:""
+})
+
 // 页面加载
 onLoad(() => {
   getDetailData()
 })
+
+
+
 
 //取消订单
 const CancelHandel = () => {
@@ -78,6 +88,16 @@ const ReletSubmit = () => {
   returnTimeTom.setDate(returnTime.getDate() + 1)
   reletSubmitData.value.returnTime = formatDate(returnTimeTom)
   popup.value.open();
+}
+//故障报修
+const popupRepair = ref();
+const repairSubmit = () => {
+  faultSubmit.value.vehicleId=detailData.value.vehicleId;
+  faultSubmit.value.information=repairDetail.value
+  popupRepair.value.open();
+}
+const submitRepairConfirm=async ()=>{
+  await SubmitFaultService(faultSubmit.value)
 }
 //二次确认发起续租
 const SubmitConfirm = async () => {
@@ -215,10 +235,10 @@ const SubmitConfirm = async () => {
 
           <view class="item">有无续租: {{ detailData.reletStatus === 0 ? '无' : '有' }}</view>
 
-          <view class="item">支付状态: {{ detailData.payStatus === 0 ? '未支付' : detailData.payStatus === 0 ? '已支付' : '退款' }}
+          <view class="item">支付状态: {{ detailData.payStatus === 0 ? '未支付' : detailData.payStatus === 1 ? '已支付' : '退款' }}
           </view>
 
-          <view class="item">押金状态: {{ detailData.cashPledgeStatus === 0 ? '未支付' : detailData.cashPledgeStatus === 0 ?
+          <view class="item">押金状态: {{ detailData.cashPledgeStatus === 0 ? '未支付' : detailData.cashPledgeStatus === 1 ?
             '已支付' : '退款' }}
           </view>
 
@@ -239,13 +259,18 @@ const SubmitConfirm = async () => {
       <!-- 底部操作栏 -->
       <view class="toolbar-height" :style="{ paddingBottom: safeAreaInsets?.bottom + 'px' }"></view>
       <view class="toolbar" :style="{ paddingBottom: safeAreaInsets?.bottom + 'px' }"
-        v-if="detailData.status === 0 || detailData.status === 1 || detailData.status === 2 || detailData.status === 4">
+        v-if="detailData.status === 0 || detailData.status === 1 || detailData.status === 2 || detailData.status === 4|| detailData.status === 3">
         <!-- 待付款状态:展示支付按钮 -->
         <template>
           <view class="button "
             v-if="(detailData.status === 0 || detailData.status === 1 || detailData.status === 2) && detailData.reletStatus === 0"
             @tap="ReletSubmit"> 申请续租
           </view>
+          <view class="button "
+            v-if="(detailData.status === 3||detailData.status === 2)"
+            @tap="repairSubmit"> 故障报修
+          </view>
+
           <view class="button primary" v-if="detailData.status === 0 || detailData.status === 4" @tap="onOrderPay"> 去支付
           </view>
           <view class="button" v-if="detailData.status === 0 || detailData.status === 1" @tap="CancelHandel"> 取消订单 </view>
@@ -278,6 +303,36 @@ const SubmitConfirm = async () => {
           <view class="item">
             <text class="label">备注：</text>
             <input class="input" type="text" placeholder="请填写续租信息" v-model="reletSubmitData.reletInfo" />
+          </view>
+
+
+        </view>
+
+
+
+      </uni-popup-dialog>
+    </uni-popup>
+
+  </view>
+
+  <view>
+    <uni-popup class="updatePopup" ref="popupRepair" type="center">
+      <uni-popup-dialog cancelText="取消" type="success" confirmText="确认" class="dialog" title="故障报修"
+        @confirm="submitRepairConfirm">
+        <view class="context">
+
+          <view class="item">
+            <text class="label">故障车辆：</text>
+            <text class="value">{{ detailData.vehicleName }}</text>
+          </view>
+          <view class="item">
+            <text class="label">车牌号码：</text>
+            <text class="value">{{ detailData.licensePlateNumber }}</text>
+          </view>
+
+          <view class="item">
+            <text class="label">故障信息：</text>
+            <input class="input" type="text" placeholder="请填写故障信息" v-model="repairDetail" />
           </view>
 
 

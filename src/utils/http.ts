@@ -1,7 +1,7 @@
 import { useMemberStore } from '@/stores'
 import { error } from 'console'
 // 请求基地址
-const baseURL = 'http://192.168.2.10:8080'
+const baseURL = 'http://127.0.0.1:8080'
 
 //添加拦截器
 const httpInterceptor = {
